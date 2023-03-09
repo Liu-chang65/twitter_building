@@ -1,32 +1,51 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {
-    BrowserRouter,
-    Routes,
-    Route,
-    Link,
-    NavLink,
-    useNavigate,
-  } from "react-router-dom";
+import { useContext } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import LinkContainer  from 'react-router-bootstrap/LinkContainer';
+import { Store } from '../../store/Store';
 
 export default function Header() {
+  const {state, dispatch: myDispatch} = useContext(Store);
+  const { userInfo } = state;
+  const navigate = useNavigate();
 
-    return (
-      <nav className="dark:bg-neutral-700 text-white flex justify-between">
-        <ul className="flex justify-between">
-          <span className="flex">
-          <li className="p-5">
-            <NavLink to="/">Twitter</NavLink>
-          </li>
-          </span>
-        </ul>
-        <ul className="flex">
-          <li className="p-5">
-            <NavLink to="/login">Login</NavLink>     
-          </li>
-          <li className="p-5">
-            <NavLink to="/signup">Sign Up</NavLink>       
-          </li>
-        </ul>
-      </nav>
-    )
+  const signoutHandler =(e)=> {
+    e.preventDefault();
+      localStorage.removeItem('userInfo');
+      myDispatch({type: 'USER_SIGNOUT'});
+      navigate('/login');
+  }
+  
+  return (
+    <header>
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <Navbar.Brand href="/">Twitter</Navbar.Brand>
+          {userInfo ? (
+            <Nav  className="justify-content-end">
+              <NavDropdown title={userInfo.user_name} id="basic-nav-dropdown">
+                  <LinkContainer to="/profile">
+                      <NavDropdown.Item>Profile</NavDropdown.Item>
+                  </LinkContainer>
+                  <Link 
+                    className="dropdown-item"
+                    onClick={signoutHandler}  
+                  >
+                    Sign out
+                  </Link>
+                </NavDropdown>
+            </Nav>
+          ):(
+            <Nav  className="justify-content-end">
+              <Nav.Link href="/login">Login</Nav.Link>
+              <Nav.Link href="/signup">Sign Up</Nav.Link>
+            </Nav>
+          )
+          }
+          
+        </Container>
+      </Navbar>
+    </header>
+    
+  )
 }

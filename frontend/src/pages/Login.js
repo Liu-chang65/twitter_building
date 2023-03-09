@@ -1,32 +1,64 @@
-import React, { useState } from 'react';
-import {
-    BrowserRouter,
-    Routes,
-    Route,
-    Link,
-    Navigate,
-    useNavigate,
-  } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { toast } from "react-toastify";
+import axios from 'axios';
+import data from '../data';
+import { Store } from '../store/Store';
 
 export default function Login() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const navigate = useNavigate();
+    const { state, dispatch:myDispatch } = useContext(Store);
+
+    const loginHandler = async (e) => {
+        e.preventDefault();
+        if(email=="" || password=="") {
+            toast.error("Please fill inputs")
+            return;
+        }
+        const req = {
+            email:email,
+            password:password
+        }
+        try{
+            const res = await axios.post(`${data.apiBaseUrl}/login`, req)
+            if(res.data.status == "success"){
+                myDispatch({type: 'USER_LOGIN', payload: res.data.content});
+                localStorage.setItem('userInfo', JSON.stringify(res.data.content))
+                navigate("/");
+            } else if (res.data.status == "login_failed"){
+                toast.error(res.data.msg)
+            }
+        } catch(err){
+            toast.error("Invalid Login")
+        }      
+    }
 
     return (
-        <div className="flex h-screen bg-gray-200">
-            <div className="m-auto w-1/3 text-white flex flex-wrap justify-center shadow-lg rounded-lg bg-gradient-to-br from-indigo-900 to-purple-300">
-                <form className="m-5 w-10/12" >  
-                    <h1 className="w-full text-4xl tracking-widget text-center my-6">Login</h1>
-                    <div className="w-full my-6">
-                        <input type="email" name="email" className="p-2 rounded shadow w-full text-black" placeholder="Email or Username"/>
-                    </div>
-                    <div className="w-full my-6">
-                        <input type="password" name="password" className="p-2 rounded shadow w-full text-black" placeholder="password"/>
-                    </div>
-                    <div className="w-full my0-10">
-                        <button type="submit" className="p-2 rounded shadow w-full bg-yellow-400 text-black">
-                        Login</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <Row>
+            <Col sm={3}></Col>
+            <Col sm={6}>
+                <Form className='text-white'>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" value={email} onChange={(e)=> {setEmail(e.target.value)}} placeholder="Enter email"/>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" value={password} onChange={(e)=>{setPassword(e.target.value)}} placeholder="Password" />
+                    </Form.Group>
+
+                    <Button variant="primary" type="button" onClick={loginHandler}>
+                        Login
+                    </Button>
+                </Form>
+            </Col>
+            <Col sm={3}></Col>
+        </Row>
+        
     )
 }
