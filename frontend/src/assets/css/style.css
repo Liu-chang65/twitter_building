@@ -36,5 +36,15 @@ body {
 .content-contain{
   background: #2b2e30;
   min-height: 85vh;
+}
 
+.all_post_container{
+  min-height: 55vh;
+  max-height: 55vh;
+  overflow-y: scroll;
+  border:1px solid white;
+}
+.card{
+  background-color: #fff0 !important;
+  border-bottom: 1px solid gray !important;
 }

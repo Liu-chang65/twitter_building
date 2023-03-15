@@ -13,15 +13,8 @@ export default function LeftSidebar() {
             <ListGroup.Item action href="/profile">
                 Profile
             </ListGroup.Item>
-            <ListGroup.Item action href="/twitter">
-                Twitter
-            </ListGroup.Item>
+
         </ListGroup>
-        // <Nav defaultActiveKey="/" className="flex-column">
-        //     <Nav.Link href="/">Home</Nav.Link>
-        //     <Nav.Link href="/notification">Notifications</Nav.Link>
-        //     <Nav.Link href="/profile">Profile</Nav.Link>
-        //     <Nav.Link href="/twitter">Twitter</Nav.Link>
-        //   </Nav>
+
     )
 }

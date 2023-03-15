@@ -1,5 +1,5 @@
 const data = {
-    apiBaseUrl:"http://127.0.0.1:8000/api"
+    apiBaseUrl:"http://192.168.1.103:8000/api"
 }
 
 export default data;

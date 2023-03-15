@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import axios from 'axios';
 import data from '../data';
+import { Store } from '../store/Store';
 
 export default function SignUp() {
     const [firstname, setFirstName] = useState("");
@@ -12,7 +13,16 @@ export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+
     const navigate = useNavigate();
+    const { state, dispatch:myDispatch } = useContext(Store);
+    const { userInfo } = state;
+
+    useEffect(()=>{
+        if(userInfo){
+            navigate("/");
+        }
+    },[]);
 
     const signUpHandler = async (e) => {
         e.preventDefault();

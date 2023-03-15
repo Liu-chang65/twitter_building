@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
@@ -9,9 +9,17 @@ import { Store } from '../store/Store';
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    
 
     const navigate = useNavigate();
     const { state, dispatch:myDispatch } = useContext(Store);
+    const { userInfo } = state;
+
+    useEffect(()=>{
+        if(userInfo){
+            navigate("/");
+        }
+    },[]);
 
     const loginHandler = async (e) => {
         e.preventDefault();
@@ -24,7 +32,8 @@ export default function Login() {
             password:password
         }
         try{
-            const res = await axios.post(`${data.apiBaseUrl}/login`, req)
+            const res = await axios.post(`${data.apiBaseUrl}/login`, req);
+            console.log(res);
             if(res.data.status == "success"){
                 myDispatch({type: 'USER_LOGIN', payload: res.data.content});
                 localStorage.setItem('userInfo', JSON.stringify(res.data.content))

@@ -22,7 +22,8 @@ class AuthController extends Controller
        
             return response()->json($respon1, 200);
         }
-        $token = auth()->user()->createToken('auth_token')->plainTextToken;
+        $token = auth()->user()->createToken('token')->plainTextToken;
+        
         $user = auth()->user();
   
         $respon = [
@@ -33,8 +34,11 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user_name' => $user->name,
+                'user_first_name' => $user->first_name,
+                'user_last_name' => $user->last_name,
                 'user_email' => $user->email,
                 'user_id' => $user->id,
+                'expiration' => 60 * 24 * 7,
             ]
         ];
    
@@ -65,5 +69,9 @@ class AuthController extends Controller
         ];
 
         return response()->json($respon, 200);     
+    }
+
+    public function test(Request $request){
+        return "test";
     }
 }

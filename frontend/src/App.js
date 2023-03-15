@@ -35,12 +35,24 @@ function App() {
         <Row>
           <Col>
             <Routes>
-              <Route path="/" element={userInfo ? (<Home />) : (<Navigate to='/login' />)} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/following" element={userInfo ? (<Following />) : (<Navigate to='/login' />)} />
-              <Route path="/notification" element={userInfo ? (<Notification />) : (<Navigate to='/login' />)} />
-              <Route path="/profile" element={userInfo ? (<Profile />) : (<Navigate to='/login' />)} />
+              {!userInfo ? 
+                (
+                  <>
+                    <Route exact={true} path="/login" element={<Login />} />
+                    <Route exact={true} path="/signup" element={<SignUp />} />
+                    <Route exact={false} path="*" element={<Navigate to='/login' />} />
+                  </>                  
+                ): 
+                (
+                  <>
+                    <Route exact path="/" element={<Home />} />
+                    <Route exact path="/following" element={<Following />} />
+                    <Route exact path="/notification" element={<Notification />} />
+                    <Route exact path="/profile" element={<Profile />} />
+                    <Route exact={false} path="*" element={<Navigate to='/' />} />
+                  </>                 
+                )
+              }
             </Routes>
           </Col>
         </Row>
