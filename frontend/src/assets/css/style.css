@@ -48,3 +48,8 @@ body {
   background-color: #fff0 !important;
   border-bottom: 1px solid gray !important;
 }
+a {
+  color: #cbcbcb !important;
+  text-decoration: none !important;
+}
+

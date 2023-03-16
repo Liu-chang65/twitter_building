@@ -9,8 +9,6 @@ import { Store } from '../store/Store';
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    
-
     const navigate = useNavigate();
     const { state, dispatch:myDispatch } = useContext(Store);
     const { userInfo } = state;
@@ -33,7 +31,6 @@ export default function Login() {
         }
         try{
             const res = await axios.post(`${data.apiBaseUrl}/login`, req);
-            console.log(res);
             if(res.data.status == "success"){
                 myDispatch({type: 'USER_LOGIN', payload: res.data.content});
                 localStorage.setItem('userInfo', JSON.stringify(res.data.content))
@@ -41,7 +38,7 @@ export default function Login() {
             } else if (res.data.status == "login_failed"){
                 toast.error(res.data.msg)
             }
-        } catch(err){
+        }catch(err){
             toast.error("Invalid Login")
         }      
     }

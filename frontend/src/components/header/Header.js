@@ -24,8 +24,8 @@ export default function Header() {
           {userInfo ? (
             <Nav  className="justify-content-end">
               <NavDropdown title={userInfo.user_name} id="basic-nav-dropdown">
-                  <LinkContainer to="/profile">
-                      <NavDropdown.Item>Profile</NavDropdown.Item>
+                  <LinkContainer to={`profile/${userInfo.user_name}`}>
+                      <NavDropdown.Item>My Profile</NavDropdown.Item>
                   </LinkContainer>
                   <Link 
                     className="dropdown-item"

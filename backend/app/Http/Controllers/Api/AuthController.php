@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -38,6 +39,7 @@ class AuthController extends Controller
                 'user_last_name' => $user->last_name,
                 'user_email' => $user->email,
                 'user_id' => $user->id,
+                'user_slug' => $user->slug,
                 'expiration' => 60 * 24 * 7,
             ]
         ];
@@ -47,9 +49,11 @@ class AuthController extends Controller
 
     public function signup(Request $request)
     {
-        
+        \Validator::extend('without_spaces', function($attr, $value){
+            return preg_match('/^\S*$/u', $value);
+        });
         $signup = $request->validate([
-            'name' => 'required|string | unique:users',
+            'name' => 'required|string|without_spaces|unique:users',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required | string | email | unique:users',
@@ -62,6 +66,7 @@ class AuthController extends Controller
         $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        $user->slug = Str::random(20);
         $user->save();
         $respon = [
             'status' => 'success',

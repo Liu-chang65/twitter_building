@@ -43,6 +43,7 @@ export default function SignUp() {
                 navigate('/login');
             } 
         } catch (error) {
+            // console.log(error.response.data.errors)
             toast.error("Please try to sign up again.");
         }
     }

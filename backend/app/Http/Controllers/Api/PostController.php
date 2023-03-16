@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\User;
+use Illuminate\Support\Str;
+
 
 class PostController extends Controller
 {
@@ -18,6 +21,7 @@ class PostController extends Controller
         $post->name = $request->name;
         $post->content = $request->content;
         $post->parent_id = 0;
+        $post->slug = Str::random(20);
         $post->save();
         $res = [
             'status' => 'create_post_success',
@@ -28,21 +32,32 @@ class PostController extends Controller
 
     public function getAllPosts()
     {
-        $posts = Post::all();
-        // if($posts->count()>0){
-        //     $res = [
-        //         'status' => 'get_all_posts_success',
-        //         'data' => $post
-        //     ];
-        // } else {
-        //     $res = [
-        //         'status' => 'get_all_posts_empty',
-        //         'data' => $post
-        //     ];
-        // }
+        $posts = Post::orderBy('created_at', 'desc')->get();
         $res = [
             'status' => 'get_all_posts_success',
             'data' => $posts
+        ];
+        return response()->json($res, 200);     
+    }
+
+    public function getOnePost($id)
+    {
+        $post = Post::find($id);
+        $res = [
+            'status' => 'get_one_post_success',
+            'data' => $post
+        ];
+        return response()->json($res, 200);     
+    }
+
+    public function getMyPosts($name)
+    {
+        $posts = Post::orderBy('created_at', 'desc')->where('name',$name)->get();
+        $user = User::where('name', $name)->first();
+        $res = [
+            'status' => 'get_my_posts_success',
+            'data' => $posts,
+            'user' => $user
         ];
         return response()->json($res, 200);     
     }

@@ -21,6 +21,7 @@ import SignUp from "./pages/SignUp";
 import Following from "./pages/Following";
 import Notification from "./pages/Notification";
 import Profile from "./pages/Profile";
+import PostDetail from "./pages/PostDetail";
 import { Store } from "./store/Store";
 
 function App() {
@@ -48,7 +49,8 @@ function App() {
                     <Route exact path="/" element={<Home />} />
                     <Route exact path="/following" element={<Following />} />
                     <Route exact path="/notification" element={<Notification />} />
-                    <Route exact path="/profile" element={<Profile />} />
+                    <Route exact path="/profile/:user_name" element={<Profile />} />
+                    <Route exact path="/post/detail/:id" element={<PostDetail />} />
                     <Route exact={false} path="*" element={<Navigate to='/' />} />
                   </>                 
                 )

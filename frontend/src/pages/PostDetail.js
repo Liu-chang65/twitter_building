@@ -7,21 +7,21 @@ import LeftSidebar from '../components/leftsidebar/LeftSidebar';
 import { Store } from '../store/Store';
 import axios from 'axios';
 import data from '../data';
-import PostItem from '../components/home/PostItem';
+import PostItem1 from '../components/home/PostItem1';
 import SpinBox from '../components/spinner/SpinBox';
-import UserBox from '../components/profile/UserBox';
 
 
-export default function Profile() {
+export default function PostDetail() {
     const params = useParams();
-    const { user_name } = params;
-    const [posts, setPosts] = useState({});
-    const [user, setUser] = useState({});
+    const { id } = params;
+    const post_id = id.split("_")[0];
+
+    const [post, setPost] = useState({});
     const navigate = useNavigate();
     const {state, dispatch: myDispatch} = useContext(Store);
     const { userInfo } = state;
 
-    const getMyPosts = async () => {
+    const getOnePost = async () => {
         const headers = { 
             headers: {
                 "Accept": "application/json",
@@ -29,10 +29,10 @@ export default function Profile() {
             } 
         };
         try{
-            const res = await axios.get(`${data.apiBaseUrl}/myposts/${user_name}`, headers);
-            if(res.data.status == "get_my_posts_success"){
-                setPosts([...res.data.data]);
-                setUser(res.data.user);
+            const res = await axios.get(`${data.apiBaseUrl}/post/${post_id}`, headers);
+            if(res.data.status == "get_one_post_success"){
+                const p = res.data.data;
+                setPost(p);
             }
         } catch(err){
             if(err.response.data.message === "Unauthenticated."){
@@ -44,7 +44,7 @@ export default function Profile() {
     };
 
     useEffect(()=>{
-        getMyPosts();
+        getOnePost();
 
     }, [userInfo]);
 
@@ -55,20 +55,15 @@ export default function Profile() {
             </Col>
             <Col sm={9} className="content-contain text-white p-3">
                 <Link to="/"><ArrowLeft size={56} /></Link>
-                <hr/>
-                <h2 className='m-2'>Profile Info</h2>
-                <UserBox user={user}/>     
-                <h2 className='m-2 mt-5'>Your Posts</h2>   
-                {posts.length?(
-                    posts.map((post, index) => (
-                        <PostItem post={post} key={index} />
-                    ))
+                <hr/>        
+                {post ? (
+                    <PostItem1 post={post}/>
                     ) : (
                     <div className='text-center mt-5'>
                         <SpinBox/>
                     </div>               
                     )                                
-                }
+                }    
             </Col>
         </Row>
     )

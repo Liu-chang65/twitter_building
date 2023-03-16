@@ -39,8 +39,9 @@ export default function PostForm() {
             const res = await axios.post(`${data.apiBaseUrl}/create_post`, req, headers);
 
             if(res.data.status == "create_post_success"){
-                setContent("");
-                navigate('/');
+                // setContent("");
+                // navigate('/');
+                window.location.reload(false);
             }
         } catch(err){
             if(err.response.data.message === "Unauthenticated."){
