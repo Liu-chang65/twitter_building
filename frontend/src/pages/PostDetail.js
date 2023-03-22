@@ -1,52 +1,34 @@
 
 import { useState, useContext, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'react-bootstrap-icons';
-import { Container, Row, Col } from 'react-bootstrap';
+import {  Row, Col, Form, Button } from 'react-bootstrap';
 import LeftSidebar from '../components/leftsidebar/LeftSidebar';
 import { Store } from '../store/Store';
-import axios from 'axios';
-import data from '../data';
+import { serviceGetOnePost } from '../service/Service';
 import PostItem1 from '../components/home/PostItem1';
 import SpinBox from '../components/spinner/SpinBox';
-
+import Comments from '../components/comment/Comments';
 
 export default function PostDetail() {
+
     const params = useParams();
     const { id } = params;
     const post_id = id.split("_")[0];
 
     const [post, setPost] = useState({});
-    const navigate = useNavigate();
-    const {state, dispatch: myDispatch} = useContext(Store);
-    const { userInfo } = state;
 
     const getOnePost = async () => {
-        const headers = { 
-            headers: {
-                "Accept": "application/json",
-                "Authorization" : `Bearer ${userInfo.access_token}`
-            } 
-        };
-        try{
-            const res = await axios.get(`${data.apiBaseUrl}/post/${post_id}`, headers);
-            if(res.data.status == "get_one_post_success"){
-                const p = res.data.data;
-                setPost(p);
-            }
-        } catch(err){
-            if(err.response.data.message === "Unauthenticated."){
-                localStorage.removeItem('userInfo');
-                myDispatch({type: 'USER_SIGNOUT'});
-                navigate('/login');
-            }
+
+        const data = await serviceGetOnePost(post_id);
+        if(data.status === "get_one_post_success"){
+            setPost(data.data);
         }
     };
 
     useEffect(()=>{
         getOnePost();
-
-    }, [userInfo]);
+    }, []);
 
     return (
         <Row>
@@ -57,13 +39,19 @@ export default function PostDetail() {
                 <Link to="/"><ArrowLeft size={56} /></Link>
                 <hr/>        
                 {post ? (
-                    <PostItem1 post={post}/>
+                        <PostItem1 post={post}/>
                     ) : (
-                    <div className='text-center mt-5'>
-                        <SpinBox/>
-                    </div>               
+                        <div className='text-center mt-5'>
+                            <SpinBox/>
+                        </div>               
                     )                                
-                }    
+                }
+                <hr />         
+                <Row className='mb-5'>
+                    <Col>
+                        <Comments postId={post_id}/>
+                    </Col>
+                </Row> 
             </Col>
         </Row>
     )

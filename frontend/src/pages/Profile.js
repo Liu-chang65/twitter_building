@@ -10,43 +10,33 @@ import data from '../data';
 import PostItem from '../components/home/PostItem';
 import SpinBox from '../components/spinner/SpinBox';
 import UserBox from '../components/profile/UserBox';
-
+import { serviceGetMyPosts } from '../service/Service';
+import AlertBox from '../components/spinner/AlertBox';
 
 export default function Profile() {
     const params = useParams();
     const { user_name } = params;
+    const [dataStatus, setDataStatus] = useState("")
     const [posts, setPosts] = useState({});
     const [user, setUser] = useState({});
     const navigate = useNavigate();
-    const {state, dispatch: myDispatch} = useContext(Store);
-    const { userInfo } = state;
+
 
     const getMyPosts = async () => {
-        const headers = { 
-            headers: {
-                "Accept": "application/json",
-                "Authorization" : `Bearer ${userInfo.access_token}`
-            } 
-        };
-        try{
-            const res = await axios.get(`${data.apiBaseUrl}/myposts/${user_name}`, headers);
-            if(res.data.status == "get_my_posts_success"){
-                setPosts([...res.data.data]);
-                setUser(res.data.user);
-            }
-        } catch(err){
-            if(err.response.data.message === "Unauthenticated."){
-                localStorage.removeItem('userInfo');
-                myDispatch({type: 'USER_SIGNOUT'});
-                navigate('/login');
-            }
+        const data = await serviceGetMyPosts(user_name)
+
+        if(data.status === "get_my_posts_success"){
+            setDataStatus(data.status)
+            setPosts([...data.data]);
+            setUser(data.user);
         }
+
     };
 
     useEffect(()=>{
         getMyPosts();
 
-    }, [userInfo]);
+    }, []);
 
     return (
         <Row>
@@ -59,15 +49,21 @@ export default function Profile() {
                 <h2 className='m-2'>Profile Info</h2>
                 <UserBox user={user}/>     
                 <h2 className='m-2 mt-5'>Your Posts</h2>   
-                {posts.length?(
-                    posts.map((post, index) => (
-                        <PostItem post={post} key={index} />
-                    ))
+                { dataStatus === "get_my_posts_success" ? 
+                    (
+                        posts.length?(
+                            posts.map((post, index) => (
+                                <PostItem post={post} key={index} />
+                            ))
+                            ) : (
+                                <AlertBox />        
+                            )    
                     ) : (
-                    <div className='text-center mt-5'>
-                        <SpinBox/>
-                    </div>               
-                    )                                
+                        
+                        <div className='text-center mt-5'>
+                            <SpinBox/>
+                        </div> 
+                    )
                 }
             </Col>
         </Row>

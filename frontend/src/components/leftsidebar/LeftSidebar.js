@@ -7,11 +7,13 @@ export default function LeftSidebar() {
             <ListGroup.Item action href="/">
                 Home
             </ListGroup.Item>
-            <ListGroup.Item action href="/notification">
-                Notifications
-            </ListGroup.Item>
+            
             <ListGroup.Item action href={`/profile/${JSON.parse(localStorage.getItem('userInfo')).user_name}`}>
                 My Profile
+            </ListGroup.Item>
+
+            <ListGroup.Item action href="/follow">
+                Follow
             </ListGroup.Item>
 
         </ListGroup>

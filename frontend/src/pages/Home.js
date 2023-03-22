@@ -3,45 +3,44 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
 import LeftSidebar from '../components/leftsidebar/LeftSidebar';
 import PostForm from '../components/home/PostForm';
-import axios from 'axios';
-import data from '../data';
 import { Store } from '../store/Store';
 import PostItem from '../components/home/PostItem';
 import SpinBox from '../components/spinner/SpinBox';
+import { serviceGetAllPosts } from '../service/Service';
+import AlertBox from '../components/spinner/AlertBox';
+import { serviceGetFollowInfo } from '../service/Service';
 
 export default function Home() {
 
+    useEffect(()=>{
+        // getAllPosts();
+        // getFollowInfo();
+        console.log('useEffect');
+    },[]);
+
     const [posts, setPosts] = useState([]);
+    const [dataStatus, setDataStatus] = useState("");
     const navigate = useNavigate();
-    const {state, dispatch: myDispatch} = useContext(Store);
-    const { userInfo } = state;
+    const {state, dispatch:myDispatch} = useContext(Store);
 
     const getAllPosts = async () => {
-        const headers = { 
-            headers: {
-                "Accept": "application/json",
-                "Authorization" : `Bearer ${userInfo.access_token}`
-            } 
-        };
-        try{
-            const res = await axios.get(`${data.apiBaseUrl}/all_posts`, headers);
-            if(res.data.status == "get_all_posts_success"){
-                const p = res.data.data;
-                setPosts([...p]);
-            }
-        } catch(err){
-            if(err.response.data.message === "Unauthenticated."){
-                localStorage.removeItem('userInfo');
-                myDispatch({type: 'USER_SIGNOUT'});
-                navigate('/login');
-            }
+
+        const data = await serviceGetAllPosts();
+        if(data.status === "get_all_posts_success"){
+            setPosts([...data.data]);
+            setDataStatus(data.status)
         }
     };
 
-    useEffect(()=>{
-        getAllPosts();
-
-    }, [userInfo]);
+    const getFollowInfo = async () =>{
+        const user_id = JSON.parse(localStorage.getItem('userInfo')).user_id;
+        const data = await serviceGetFollowInfo(user_id);
+        console.log(data);
+        if(data.status === "get_follow_info_success"){
+            localStorage.setItem('followInfo', JSON.stringify(data.data));
+        }
+    }
+    
 
     return (
         <Row>
@@ -53,15 +52,22 @@ export default function Home() {
                 <hr />
                 <Row className="all_post_container m-2 pt-3">
                     <Col>
-                        {posts.length?(
-                            posts.map((post, index) => (
-                                <PostItem post={post} key={index} />
-                            ))
+                        {
+                            dataStatus === "get_all_posts_success" ? 
+                            (
+                                posts.length?(
+                                    posts.map((post, index) => (
+                                        <PostItem post={post} key={index} />
+                                    ))
+                                    ) : (
+                                        <AlertBox />        
+                                    )    
                             ) : (
-                            <div className='text-center mt-5'>
-                                <SpinBox/>
-                            </div>               
-                            )                                
+                                
+                                <div className='text-center mt-5'>
+                                    <SpinBox/>
+                                </div> 
+                            )
                         }
                     </Col>
                 </Row>

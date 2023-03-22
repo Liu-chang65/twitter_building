@@ -30,6 +30,24 @@ class PostController extends Controller
         return response()->json($res, 200);     
     }
 
+    public function rePost(Request $request)
+    {
+        $post = new Post();
+        $post->user_id = $request->user_id;
+        $post->first_name = $request->first_name;
+        $post->last_name = $request->last_name;
+        $post->name = $request->name;
+        $post->content = $request->content;
+        $post->parent_id = $request->parent_id;
+        $post->slug = Str::random(20);
+        $post->save();
+        $res = [
+            'status' => 're_post_success',
+            'data' => $post
+        ];
+        return response()->json($res, 200);     
+    }
+
     public function getAllPosts()
     {
         $posts = Post::orderBy('created_at', 'desc')->get();

@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
-import axios from 'axios';
-import data from '../data';
 import { Store } from '../store/Store';
+import { serviceSignUp } from '../service/Service';
 
 export default function SignUp() {
     const [firstname, setFirstName] = useState("");
@@ -26,7 +25,7 @@ export default function SignUp() {
 
     const signUpHandler = async (e) => {
         e.preventDefault();
-        if(firstname == "" || lastname=="" || name=="" || email=="" || password=="") {
+        if(firstname === "" || lastname==="" || name==="" || email==="" || password==="") {
             toast.error("Please fill inputs")
             return;
         }
@@ -37,14 +36,11 @@ export default function SignUp() {
             email: email,
             password: password
         }
-        try {
-            const res = await axios.post(`${data.apiBaseUrl}/signup`, req);
-            if(res.data.status == "success"){
-                navigate('/login');
-            } 
-        } catch (error) {
-            // console.log(error.response.data.errors)
-            toast.error("Please try to sign up again.");
+        const data = await serviceSignUp(req)
+        if(data.status == "success"){
+            navigate('/login');
+        } else {
+            toast.error("Please remove space in username")
         }
     }
 

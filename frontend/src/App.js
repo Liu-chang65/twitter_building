@@ -18,17 +18,19 @@ import LeftSidebar from "./components/leftsidebar/LeftSidebar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Following from "./pages/Following";
+import Follow from "./pages/Follow";
 import Notification from "./pages/Notification";
 import Profile from "./pages/Profile";
 import PostDetail from "./pages/PostDetail";
 import { Store } from "./store/Store";
 
 function App() {
+
   const {state, dispatch:myDispatch} = useContext(Store);
   const { userInfo } = state;
 
   return (
+
     <BrowserRouter>
       <ToastContainer position='top-right' limit={1}/>
       <Header />
@@ -47,10 +49,10 @@ function App() {
                 (
                   <>
                     <Route exact path="/" element={<Home />} />
-                    <Route exact path="/following" element={<Following />} />
                     <Route exact path="/notification" element={<Notification />} />
                     <Route exact path="/profile/:user_name" element={<Profile />} />
                     <Route exact path="/post/detail/:id" element={<PostDetail />} />
+                    <Route exact path="/follow" element={<Follow />} />
                     <Route exact={false} path="*" element={<Navigate to='/' />} />
                   </>                 
                 )

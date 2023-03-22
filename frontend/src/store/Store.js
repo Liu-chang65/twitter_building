@@ -4,7 +4,8 @@ export const Store = createContext();
 
 
 const initialState = {
-    userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')):null
+    userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')):null,
+    // followInfo: localStorage.getItem('followInfo') ? JSON.parse(localStorage.getItem('followInfo')):null
 }
 
 const reducer = (state, action)=> {

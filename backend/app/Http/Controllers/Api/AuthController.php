@@ -76,7 +76,4 @@ class AuthController extends Controller
         return response()->json($respon, 200);     
     }
 
-    public function test(Request $request){
-        return "test";
-    }
 }

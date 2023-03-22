@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
-import axios from 'axios';
-import data from '../data';
 import { Store } from '../store/Store';
+import { serviceLogin } from '../service/Service';
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -29,18 +28,14 @@ export default function Login() {
             email:email,
             password:password
         }
-        try{
-            const res = await axios.post(`${data.apiBaseUrl}/login`, req);
-            if(res.data.status == "success"){
-                myDispatch({type: 'USER_LOGIN', payload: res.data.content});
-                localStorage.setItem('userInfo', JSON.stringify(res.data.content))
-                navigate("/");
-            } else if (res.data.status == "login_failed"){
-                toast.error(res.data.msg)
-            }
-        }catch(err){
-            toast.error("Invalid Login")
-        }      
+        const data = await serviceLogin(req);
+        if(data.status === "success"){
+            myDispatch({type: 'USER_LOGIN', payload: data.content});
+            localStorage.setItem('userInfo', JSON.stringify(data.content))
+            navigate("/");
+        } else if (data.status === "login_failed"){
+            toast.error(data.msg)
+        }  
     }
 
     return (

@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import LinkContainer  from 'react-router-bootstrap/LinkContainer';
 import { Store } from '../../store/Store';
+import logo from '../../assets/img/logo.png';
 
 export default function Header() {
   const {state, dispatch: myDispatch} = useContext(Store);
@@ -20,7 +21,7 @@ export default function Header() {
     <header>
       <Navbar bg="dark" variant="dark">
         <Container>
-          <Navbar.Brand href="/">Twitter</Navbar.Brand>
+          <Navbar.Brand href="/"><img src={logo} width="150px"/></Navbar.Brand>
           {userInfo ? (
             <Nav  className="justify-content-end">
               <NavDropdown title={userInfo.user_name} id="basic-nav-dropdown">
